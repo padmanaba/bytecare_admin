@@ -10,6 +10,10 @@ import AuthLayout from "@/layouts/AuthLayout";
 import Login from "@/pages/auth/Login";
 import Dashboard from "@/pages/dashboard/Dashboard";
 
+import UserList from "@/pages/Users/UserList";
+
+import CallbackList from "./pages/CallbackRequests/CallbackList";
+
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +40,22 @@ function App() {
             element={
               <AdminLayout>
                 <Dashboard />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/customers"
+            element={
+              <AdminLayout>
+                <UserList />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/callback-requests"
+            element={
+              <AdminLayout>
+                <CallbackList />
               </AdminLayout>
             }
           />

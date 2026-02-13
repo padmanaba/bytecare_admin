@@ -11,15 +11,17 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 const menuItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+  { name: "Users/caregivers", icon: Users, path: "/customers" },
+  { name: "Callback-Requests", icon: CreditCard, path: "/callback-requests" },
 
-  {
-    name: "Customers",
-    icon: Users,
-    children: [
-      { name: "Get Users", path: "/customers/users" },
-      { name: "Get Caregivers", path: "/customers/caregivers" },
-    ],
-  },
+  // {
+  //   name: "Customers",
+  //   icon: Users,
+  //   children: [
+  //     { name: "Get Users", path: "/customers/users" },
+  //     { name: "Get Caregivers", path: "/customers/caregivers" },
+  //   ],
+  // },
 
   { name: "Billing", icon: CreditCard, path: "/billing" },
   { name: "Settings", icon: Settings, path: "/settings" },
