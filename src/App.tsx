@@ -12,7 +12,7 @@ import Dashboard from "@/pages/dashboard/Dashboard";
 
 import UserList from "@/pages/Users/UserList";
 
-import CallbackList from "./pages/CallbackRequests/CallbackList";
+import BookingList from "./pages/CallbackRequests/BookingList";
 
 function App() {
   return (
@@ -55,7 +55,7 @@ function App() {
             path="/callback-requests"
             element={
               <AdminLayout>
-                <CallbackList />
+                <BookingList />
               </AdminLayout>
             }
           />

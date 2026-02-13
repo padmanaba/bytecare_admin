@@ -1,54 +1,77 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Chip, Button, Stack } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useCallbackStore } from "@/store/callbackStore";
+import { useBookingStore } from "@/store/bookingStore";
 import AssignCaregiverDialog from "./AssignCaregiverDialog";
-import CallbackDetailsDrawer from "./CallbackDetailsDrawer";
+import BookingDetailsDrawer from "./BookingDetailsDrawer";
 
-const CallbackList = () => {
+const BookingList = () => {
   const [selected, setSelected] = useState<any | null>(null);
-
-  const { list, loading, page, total, setPage, getCallbacks } =
-    useCallbackStore();
-
   const [assignId, setAssignId] = useState<string | null>(null);
 
+  const { list, loading, page, total, setPage, getBookings } =
+    useBookingStore();
+
   useEffect(() => {
-    getCallbacks();
+    getBookings();
   }, [page]);
 
   const columns: GridColDef[] = [
     {
+      field: "bookingId",
+      headerName: "Booking ID",
+      flex: 1,
+    },
+    {
       field: "service",
       headerName: "Service",
       flex: 1,
-      valueGetter: (value, row) => row.service?.name,
+      valueGetter: (_, row) => row.service?.name || "-",
     },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "mobileNo", headerName: "Mobile", flex: 1 },
-    { field: "location", headerName: "Location", flex: 1 },
     {
-      field: "preferredDate",
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      valueGetter: (_, row) => row.contactDetails?.name || "-",
+    },
+    {
+      field: "mobile",
+      headerName: "Mobile",
+      flex: 1,
+      valueGetter: (_, row) => row.contactDetails?.mobile || "-",
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      flex: 1,
+      valueGetter: (_, row) => row.contactDetails?.location || "-",
+    },
+    {
+      field: "date",
       headerName: "Date",
       flex: 1,
-      valueGetter: (value, row) =>
-        new Date(row.preferredDate).toLocaleDateString(),
+      valueGetter: (_, row) =>
+        row.date ? new Date(row.date).toLocaleDateString() : "-",
     },
     {
       field: "time",
       headerName: "Time",
       flex: 1,
-      valueGetter: (value, row) =>
-        `${row.preferredStartTime} - ${row.preferredEndTime}`,
+      valueGetter: (_, row) =>
+        `${row.startTime || "-"} - ${row.endTime || "-"}`,
     },
     {
-      field: "status",
-      headerName: "Status",
+      field: "caregiverStatus",
+      headerName: "Caregiver Status",
       flex: 1,
       renderCell: (params) => (
         <Chip
-          label={params.row.status}
-          color={params.row.status === "pending" ? "warning" : "success"}
+          label={params.row.caregiverStatus}
+          color={
+            params.row.caregiverStatus === "NOT_ASSIGNED"
+              ? "warning"
+              : "success"
+          }
         />
       ),
     },
@@ -66,7 +89,7 @@ const CallbackList = () => {
             View
           </Button>
 
-          {params.row.status === "pending" && (
+          {params.row.caregiverStatus === "NOT_ASSIGNED" && (
             <Button
               size="small"
               variant="contained"
@@ -83,7 +106,7 @@ const CallbackList = () => {
   return (
     <Box sx={{ height: 650, width: "100%" }}>
       <Typography variant="h5" mb={2}>
-        Pending Callback Requests
+        Booking Requests
       </Typography>
 
       <DataGrid
@@ -102,10 +125,11 @@ const CallbackList = () => {
 
       <AssignCaregiverDialog
         open={!!assignId}
-        callbackId={assignId}
+        bookingId={assignId}
         onClose={() => setAssignId(null)}
       />
-      <CallbackDetailsDrawer
+
+      <BookingDetailsDrawer
         open={!!selected}
         data={selected}
         onClose={() => setSelected(null)}
@@ -114,4 +138,4 @@ const CallbackList = () => {
   );
 };
 
-export default CallbackList;
+export default BookingList;

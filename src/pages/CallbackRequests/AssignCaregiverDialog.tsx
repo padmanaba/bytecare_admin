@@ -6,41 +6,45 @@ import {
   Button,
   MenuItem,
   Select,
+  CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchAvailableCaregivers } from "@/services/caregiverService";
-import { useCallbackStore } from "@/store/callbackStore";
+import { fetchAvailableCaregivers } from "@/services/bookingService";
+import { useBookingStore } from "@/store/bookingStore";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  callbackId: string | null;
+  bookingId: string | null;
 }
 
-const AssignCaregiverDialog = ({ open, onClose, callbackId }: Props) => {
+const AssignCaregiverDialog = ({ open, onClose, bookingId }: Props) => {
   const [caregivers, setCaregivers] = useState<any[]>([]);
   const [selected, setSelected] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { assignToCaregiver } = useCallbackStore();
+  const { assignCaregiver } = useBookingStore();
 
   useEffect(() => {
     const loadCaregivers = async () => {
-      if (!callbackId) return;
+      if (!bookingId) return;
 
-      const data = await fetchAvailableCaregivers(callbackId);
-      setCaregivers(data);
+      try {
+        setLoading(true);
+        const data = await fetchAvailableCaregivers(bookingId);
+        setCaregivers(data || []);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (open) {
-      loadCaregivers();
-    }
-  }, [open, callbackId]);
-
-  console.log("Cargiver Details", caregivers);
+    if (open) loadCaregivers();
+  }, [open, bookingId]);
 
   const handleAssign = async () => {
-    if (!callbackId || !selected) return;
-    await assignToCaregiver(callbackId, selected);
+    if (!bookingId || !selected) return;
+
+    await assignCaregiver(bookingId, selected);
     onClose();
   };
 
@@ -49,22 +53,29 @@ const AssignCaregiverDialog = ({ open, onClose, callbackId }: Props) => {
       <DialogTitle>Assign Caregiver</DialogTitle>
 
       <DialogContent>
-        <Select
-          fullWidth
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-        >
-          {caregivers.map((cg) => (
-            <MenuItem key={cg._id} value={cg._id}>
-              {cg.name} - {cg.experienceYears} yrs
-            </MenuItem>
-          ))}
-        </Select>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Select
+            fullWidth
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+            displayEmpty
+          >
+            <MenuItem value="">Select Caregiver</MenuItem>
+
+            {caregivers.map((cg) => (
+              <MenuItem key={cg._id} value={cg._id}>
+                {cg.name} - {cg.experienceYears} yrs
+              </MenuItem>
+            ))}
+          </Select>
+        )}
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleAssign}>
+        <Button variant="contained" disabled={!selected} onClick={handleAssign}>
           Assign
         </Button>
       </DialogActions>
