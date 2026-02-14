@@ -9,20 +9,29 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-const menuItems = [
+import { LucideIcon } from "lucide-react";
+
+type SidebarItem =
+  | {
+      name: string;
+      icon: LucideIcon;
+      path: string;
+      children?: never;
+    }
+  | {
+      name: string;
+      icon: LucideIcon;
+      children: {
+        name: string;
+        path: string;
+      }[];
+      path?: never;
+    };
+
+const menuItems: SidebarItem[] = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { name: "Users/caregivers", icon: Users, path: "/customers" },
   { name: "Callback-Requests", icon: CreditCard, path: "/callback-requests" },
-
-  // {
-  //   name: "Customers",
-  //   icon: Users,
-  //   children: [
-  //     { name: "Get Users", path: "/customers/users" },
-  //     { name: "Get Caregivers", path: "/customers/caregivers" },
-  //   ],
-  // },
-
   { name: "Billing", icon: CreditCard, path: "/billing" },
   { name: "Settings", icon: Settings, path: "/settings" },
 ];
